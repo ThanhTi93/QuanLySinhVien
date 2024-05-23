@@ -7,7 +7,7 @@ const port = 3000;
 // Sử dụng CORS middleware
 app.use(cors());
 
-// Create a connection to the database
+// Tạo kết nối đến cơ sở dữ liệu
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -15,7 +15,7 @@ const connection = mysql.createConnection({
     database: 'QuanLySinhVien'
 });
 
-// Connect to the database
+// Kết nối đến cơ sở dữ liệu
 connection.connect(err => {
     if (err) {
         console.error('Error connecting to the database:', err);
@@ -24,7 +24,7 @@ connection.connect(err => {
     console.log('Connected to the database');
 });
 
-// Route to fetch all data using the stored procedure
+// Route để lấy tất cả dữ liệu từ bảng monhoc bằng stored procedure
 app.get('/api/monhoc', (req, res) => {
     const query = 'CALL getAllMonHoc()';
 
@@ -35,12 +35,28 @@ app.get('/api/monhoc', (req, res) => {
             return;
         }
 
-        // Send the results as the response
+        // Gửi kết quả dưới dạng JSON
         res.json(results[0]);
     });
 });
 
-// Start the server
+// Route để lấy tất cả dữ liệu từ bảng lop bằng stored procedure
+app.get('/api/lop', (req, res) => {
+    const query = 'CALL getAllLop()';
+
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            res.status(500).send('Error fetching data');
+            return;
+        }
+
+        // Gửi kết quả dưới dạng JSON
+        res.json(results[0]);
+    });
+});
+
+// Khởi động máy chủ
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
